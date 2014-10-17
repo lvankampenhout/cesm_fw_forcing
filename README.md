@@ -1,7 +1,9 @@
 cesm_fw_forcing
 ===============
 
-Custom code that implements freshwater (FW) forcing in CESM. Questions to l.vankampenhout[at]uu.nl
+Custom code that implements freshwater (FW) forcing in CESM. 
+
+Questions to `l.vankampenhout[at]uu.nl`
 
 User provides freshwater fluxes (liquid, solid) in 12-monthly files. The fluxes are read by POP and inserted (added) at every timestep. Interpolation is applied when appropriate. As the forcing files are given for each calendar year, 3 files are needed in total: the fluxes for the current model year, the fluxes of previous year (needed for interpolation in early January) and the fluxes of next year (needed for interpolation in late December). The simulation needs to be restarted at every new calendar year to update these file pointers.  
 Variable names for the liquid and solid fluxes are FW_liquid and FW_solid, respectively. These are hardcoded. The liquid flux is added to POP field ROFF_F and the solid flux to IOFF_F. 
@@ -17,7 +19,7 @@ Limitations
 
 Warnings
 --------
-* Annual forcing (data_type='annual') has not been fully implemented yet. Amongst others, this only uses the liquid fluxes (variable FW_liquid) and does not apply interpolation. Use it at your own risk!
+* Annual forcing (`data_type='annual'`) has not been fully implemented yet. Amongst others, this only uses the liquid fluxes (variable FW_liquid) and does not apply interpolation. Use it at your own risk!
 
 Compatibility
 -------------
@@ -27,13 +29,13 @@ Files
 -----
 The following files are present:
 
-* build-namelist
+* `build-namelist`
   includes freshwater namelist in the build scheme
   
-* namelist_definition_pop2.xml
+* `namelist_definition_pop2.xml`
   defines freshwater namelist (forcing_imau_nml)
   
-* forcing_coupled.F90
+* `forcing_coupled.F90`
   implements the file reading and adding of the freshwater fluxes. Optionally the 
   original fluxes are blanked. 
 
@@ -44,7 +46,7 @@ The following files are present:
 
 How to use
 ----------
-Copy the above files to the SourceMods directory $CASE/SourceMods/src.pop2/
+Copy the above files to the SourceMods directory `$CASE/SourceMods/src.pop2/`
 
 The freshwater forcing must be enabled through the namelist. CESM version 1.1 or higher: 
 
