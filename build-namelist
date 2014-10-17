@@ -1693,6 +1693,7 @@ my @groups = qw(domain_nml
                 forcing_pt_interior_nml
                 forcing_s_interior_nml
                 forcing_ap_nml
+                forcing_imau_nml
                 coupled_nml
                 sw_absorption_nml
                 transports_nml

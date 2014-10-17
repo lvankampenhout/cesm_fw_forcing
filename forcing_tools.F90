@@ -594,7 +594,7 @@
    subroutine interpolate_forcing(INTERP, FIELD, forcing_time,         &
          forcing_interp_type, forcing_time_min_loc,                    &
          forcing_interp_freq, forcing_interp_inc, forcing_interp_next, &
-         forcing_interp_last, nsteps_run_check)
+         forcing_interp_last, nsteps_run_check, FIELD_PREV, FIELD_NEXT)
 
 ! !DESCRIPTION:
 !  Temporally interpolates field based on input interpolation options
@@ -615,6 +615,9 @@
 
    real (r8), dimension(:,:,:,:,:), intent(in) :: &
       FIELD         !  forcing field to be interpolated
+
+   real (r8), dimension(:,:,:,:), intent(in), optional :: &
+      FIELD_PREV, FIELD_NEXT         !  PREV contains last December, NEXT contains next January
 
    real (r8), intent(in) :: &
       forcing_interp_inc,   &! forcing increment
@@ -701,17 +704,51 @@
          end do
          !$OMP END PARALLEL DO
 
+         if (present(FIELD_PREV) .or. present(FIELD_NEXT)) &
+            call exit_POP(sigAbort,'ERROR: imau forcing programming error in forcing_tools.F90 ')
+
       else  ! 2d surface forcing with 1 or more fields
 
-         !$OMP PARALLEL DO PRIVATE(iblock, n)
-         do iblock=1,nblocks_clinic
-         do n=1,size(FIELD,dim=4)
-            INTERP(:,:,iblock,n) = &
-                   weight *FIELD(:,:,iblock,n,forcing_time_min_loc) + &
-             (c1 - weight)*FIELD(:,:,iblock,n,second)
-         end do
-         end do
-         !$OMP END PARALLEL DO
+         if (present(FIELD_PREV) .and. forcing_time_min_loc == 12) then
+            ! IMAU forcing special case: interpolate with values from last year December
+
+            !$OMP PARALLEL DO PRIVATE(iblock, n)
+            do iblock=1,nblocks_clinic
+            do n=1,size(FIELD,dim=4)
+               INTERP(:,:,iblock,n) = &
+                      weight *FIELD_PREV(:,:,iblock,n) + &
+                (c1 - weight)*FIELD(:,:,iblock,n,second)
+            end do
+            end do
+            !$OMP END PARALLEL DO
+
+
+         elseif (present(FIELD_NEXT) .and. forcing_time_min_loc == 12) then
+            ! IMAU forcing special case: interpolate with values from next year January
+
+            !$OMP PARALLEL DO PRIVATE(iblock, n)
+            do iblock=1,nblocks_clinic
+            do n=1,size(FIELD,dim=4)
+               INTERP(:,:,iblock,n) = &
+                      weight *FIELD(:,:,iblock,n,forcing_time_min_loc) + &
+                (c1 - weight)*FIELD_NEXT(:,:,iblock,n)
+            end do
+            end do
+            !$OMP END PARALLEL DO
+
+         else
+            ! default case
+
+            !$OMP PARALLEL DO PRIVATE(iblock, n)
+            do iblock=1,nblocks_clinic
+            do n=1,size(FIELD,dim=4)
+               INTERP(:,:,iblock,n) = &
+                      weight *FIELD(:,:,iblock,n,forcing_time_min_loc) + &
+                (c1 - weight)*FIELD(:,:,iblock,n,second)
+            end do
+            end do
+            !$OMP END PARALLEL DO
+         endif
 
       endif
 

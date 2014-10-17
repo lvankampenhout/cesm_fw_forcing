@@ -988,6 +988,72 @@ Default: 'nc'
 </entry>
 
 <!-- - - - - - - - - - - - - - - - - - -->
+<!-- Group: forcing_imau_nml (IMAU)  - -->
+<!-- - - - - - - - - - - - - - - - - - -->
+
+<entry 
+id="imau_filename"
+type="char*256"
+category="forcing"
+group="forcing_imau_nml" >
+NetCDF filename for realistic fresh water forcing, monthly data (12 frames).
+
+Default: -
+</entry>
+
+<entry 
+id="imau_filename_prev"
+type="char*256"
+category="forcing"
+group="forcing_imau_nml" >
+Values for the previous year, needed for temporal interpolation, monthly data (12 frames).
+
+Default: -
+</entry>
+
+<entry 
+id="imau_filename_next"
+type="char*256"
+category="forcing"
+group="forcing_imau_nml" >
+Values for the next year, needed for temporal interpolation, monthly data (12 frames).
+
+Default: -
+</entry>
+
+<entry 
+id="imau_data_type"
+type="char*256"
+category="forcing"
+group="forcing_imau_nml"
+valid_values="none,annual,monthly" >
+Type or periodicity of fresh water forcing data.
+
+Valid Values: 'none', 'annual', 'monthly'
+Default: 'none' (namelist not used)
+</entry>
+
+<entry 
+id="imau_blanking"
+type="logical"
+category="forcing"
+group="forcing_imau_nml" >
+Flag for reading blanking mask from file and applying it every timestep. 
+
+Default: .false.
+</entry>
+
+<entry 
+id="imau_filename_blanking"
+type="char*256"
+category="forcing"
+group="forcing_imau_nml" >
+Blanking mask that is applied to internal freshwater fluxes.
+
+Default: -
+</entry>
+
+<!-- - - - - - - - - - - - - - - - - - -->
 <!-- Group: movie_nml                - -->
 <!-- - - - - - - - - - - - - - - - - - -->
 
