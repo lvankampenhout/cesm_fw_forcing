@@ -8,7 +8,7 @@ Description
 
 User provides freshwater fluxes (liquid, solid) in 12-monthly files. The fluxes are read by POP and inserted (added) at every timestep. Interpolation is applied when appropriate. As the forcing files are given for each calendar year, 3 files are needed in total: the fluxes for the current model year, the fluxes of previous year (needed for interpolation in early January) and the fluxes of next year (needed for interpolation in late December). The simulation needs to be restarted at every new calendar year to update these file pointers. Variable names for the liquid and solid fluxes are FW_liquid and FW_solid, respectively. These are hardcoded. The liquid flux is added to POP field ROFF_F and the solid flux to IOFF_F. 
 
-Optionally *blanking* is applied just before the freshwater fluxes are inserted. The fields ROFF_F and IOFF_F are set to zero on a user-defined mask. In this way a flux-replacement design can be achieved. Cells are blanked where mask > 1.0. The mask variable name in the input file is hardcoded to BLK_MASK.
+Optionally *blanking* is applied just before the freshwater fluxes are inserted. The fields ROFF_F and IOFF_F are set to zero on a user-defined mask. In this way flux-replacement designs may be achieved. Cells are blanked where mask > 0.0. The mask variable name in the input file is hardcoded to BLK_MASK.
 
 Limitations
 ------------
