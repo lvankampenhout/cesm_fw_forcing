@@ -37,25 +37,24 @@ The following files are present:
   implements the file reading and adding of the freshwater fluxes. Optionally the 
   original fluxes are blanked. 
 
-* forcing_tools.F90
+* `forcing_tools.F90`
   adapted interpolation scheme, needed for monthly data. The interpolation for beginning of January
   needs the values from the previous year. Likewise the interpolation of end-December needs the fields
   for the next year. 
 
 How to use
 ----------
-Copy the above files to the SourceMods directory
-   $CASE/SourceMods/src.pop2/
+Copy the above files to the SourceMods directory $CASE/SourceMods/src.pop2/
 
 The freshwater forcing must be enabled through the namelist. CESM version 1.1 or higher: 
 
-cat >> user_nl_pop2 << _EOF
-imau_filename&forcing_imau_nml        = '/home/kampe004/data/fw/FW_GrIS_AIS_1850.nc'
-imau_filename_prev&forcing_imau_nml   = '/home/kampe004/data/fw/FW_GrIS_AIS_1849.nc'
-imau_filename_next&forcing_imau_nml   = '/home/kampe004/data/fw/FW_GrIS_AIS_1851.nc'
-imau_data_type&forcing_imau_nml       = 'monthly'
-imau_blanking&forcing_imau_nml        = .true.
-imau_filename_blanking&forcing_imau_nml   = '/home/kampe004/data/blanking_mask/blk_msk_gx1v6.nc'
-_EOF
+    cat >> user_nl_pop2 << _EOF
+    imau_filename&forcing_imau_nml        = '/home/kampe004/data/fw/FW_GrIS_AIS_1850.nc'
+    imau_filename_prev&forcing_imau_nml   = '/home/kampe004/data/fw/FW_GrIS_AIS_1849.nc'
+    imau_filename_next&forcing_imau_nml   = '/home/kampe004/data/fw/FW_GrIS_AIS_1851.nc'
+    imau_data_type&forcing_imau_nml       = 'monthly'
+    imau_blanking&forcing_imau_nml        = .true.
+    imau_filename_blanking&forcing_imau_nml   = '/home/kampe004/data/blanking_mask/blk_msk_gx1v6.nc'
+    _EOF
 
 
