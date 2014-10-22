@@ -208,7 +208,9 @@
    integer (int_kind) :: &
       movie_MELT,        & ! movie id for melt
       movie_ROFF,        & ! movie id for river runoff
-      movie_IOFF           ! movie id for ice runoff
+      movie_IOFF,        & ! movie id for ice runoff
+      movie_ROFF_ORIG,   & ! movie id for river runoff (from coupler)
+      movie_IOFF_ORIG      ! movie id for ice runoff (from coupler)
 
 
 !EOC
@@ -302,14 +304,21 @@
 !-----------------------------------------------------------------------
 
    call define_movie_field(movie_MELT,'MELT',0,                          &
-                          long_name='Melt flux from Coupler',            &
+                          long_name='Melt flux',                         &
                           units='kg/m2/s', grid_loc='2110' )
    call define_movie_field(movie_ROFF,'ROFF',0,                          &
-                          long_name='River runoff flux from Coupler',    &
+                          long_name='River runoff flux',                 &
                           units='kg/m2/s', grid_loc='2110' )
    call define_movie_field(movie_IOFF,'IOFF',0,                          &
+                          long_name='Ice runoff flux',                   &
+                          units='kg/m2/s', grid_loc='2110' )
+   call define_movie_field(movie_ROFF_ORIG,'ROFF_ORIG',0,                          &
+                          long_name='River runoff flux from Coupler',    &
+                          units='kg/m2/s', grid_loc='2110' )
+   call define_movie_field(movie_IOFF_ORIG,'IOFF_ORIG',0,                          &
                           long_name='Ice runoff flux from Coupler',      &
                           units='kg/m2/s', grid_loc='2110' )
+
 
 
 !-----------------------------------------------------------------------
@@ -1352,6 +1361,28 @@ contains
                                  imau_interp_next + imau_interp_inc
          endif
 
+         ! -----------------------------------------------------
+         ! accumulate surface height movie diagnostics if requested
+         ! -----------------------------------------------------
+
+         if (movie_requested(movie_ROFF_ORIG) ) then
+            !$OMP PARALLEL DO PRIVATE(iblock)
+            do iblock = 1, nblocks_clinic
+               call update_movie_field(  &
+                        ROFF_F(:,:,iblock), movie_ROFF_ORIG,iblock,1)
+            enddo
+            !$OMP END PARALLEL DO
+         endif
+
+         if (movie_requested(movie_IOFF_ORIG) ) then
+            !$OMP PARALLEL DO PRIVATE(iblock)
+            do iblock = 1, nblocks_clinic
+            call update_movie_field(  &
+                     IOFF_F(:,:,iblock), movie_IOFF_ORIG,iblock,1)
+            enddo
+            !$OMP END PARALLEL DO
+         endif
+
          if (imau_blanking) then
          !$OMP PARALLEL DO PRIVATE(iblock)
             do iblock = 1, nblocks_clinic
@@ -1362,6 +1393,10 @@ contains
             enddo
          !$OMP END PARALLEL DO
          endif
+
+         ! -----------------------------------------------------
+         ! add IMAU freshwater fluxes from file to the model fields
+         ! -----------------------------------------------------
 
          !$OMP PARALLEL DO PRIVATE(iblock)
          do iblock = 1, nblocks_clinic
@@ -1386,11 +1421,9 @@ contains
                       MELT_F(:,:,iblock)+ROFF_F(:,:,iblock)+IOFF_F(:,:,iblock))*salinity_factor   &
                     + SALT_F(:,:,iblock)*sflux_factor)  
 
-!-----------------------------------------------------------------------
-!
-!     accumulate surface height movie diagnostics if requested
-!
-!-----------------------------------------------------------------------
+         !-----------------------------------------------------------------------
+         ! accumulate surface height movie diagnostics if requested
+         !-----------------------------------------------------------------------
 
          if (movie_requested(movie_MELT) ) then
             call update_movie_field(  &
