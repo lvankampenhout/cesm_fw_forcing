@@ -1213,16 +1213,6 @@ contains
    WORK2 = c0
 
 
-   !$OMP PARALLEL DO PRIVATE(iblock)
-   do iblock = 1, nblocks_clinic
-      STF(:,:,1,iblock) = (EVAP_F(:,:,iblock)*latent_heat_vapor_mks         &
-                           + SENH_F(:,:,iblock) + LWUP_F(:,:,iblock)        &
-                           + LWDN_F(:,:,iblock) + MELTH_F(:,:,iblock)       &
-                           -(SNOW_F(:,:,iblock)+IOFF_F(:,:,iblock)) * latent_heat_fusion_mks)*  &
-                             RCALCT(:,:,iblock)*hflux_factor 
-   enddo
-   !$OMP END PARALLEL DO
-                                        
 !-----------------------------------------------------------------------
 !
 !  combine freshwater flux components
@@ -1416,6 +1406,12 @@ contains
       !$OMP PARALLEL DO PRIVATE(iblock)
       do iblock = 1, nblocks_clinic
 
+         STF(:,:,1,iblock) = (EVAP_F(:,:,iblock)*latent_heat_vapor_mks         &
+                           + SENH_F(:,:,iblock) + LWUP_F(:,:,iblock)        &
+                           + LWDN_F(:,:,iblock) + MELTH_F(:,:,iblock)       &
+                           -(SNOW_F(:,:,iblock)+IOFF_F(:,:,iblock)) * latent_heat_fusion_mks)*  &
+                             RCALCT(:,:,iblock)*hflux_factor 
+                                        
          STF(:,:,2,iblock) = RCALCT(:,:,iblock)*(  &
                      (PREC_F(:,:,iblock)+EVAP_F(:,:,iblock)+  &
                       MELT_F(:,:,iblock)+ROFF_F(:,:,iblock)+IOFF_F(:,:,iblock))*salinity_factor   &
